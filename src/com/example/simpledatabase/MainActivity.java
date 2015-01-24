@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
@@ -52,13 +53,13 @@ public class MainActivity extends Activity {
 		clearResult();
 		MyDbHelper helper = new MyDbHelper(this);
 		SQLiteDatabase db = helper.getWritableDatabase();
-		// 直接SQL版
+		// execSQLメソッド版
 		try{
 			db.execSQL("INSERT INTO messages(body) VALUES('abc')");
-			addResult("execSQLが成功しました");
+			addResult("execSQL版が成功しました");
 		}
 		catch(Exception ex){
-			addResult("execSQLが失敗しました");
+			addResult("execSQL版が失敗しました");
 		}
 		// insertメソッド版
 		try{
@@ -69,10 +70,53 @@ public class MainActivity extends Activity {
 				null,		// データを挿入する際にnull値が許可されていないカラムに代わりに利用される値
 				values		// 値群
 			);
-			addResult("insertメソッドが成功しました");
+			addResult("insert版が成功しました");
 		}
 		catch(Exception ex){
-			addResult("insertメソッドが失敗しました");
+			addResult("insert版が失敗しました");
+		}
+	}
+	
+	// SELECT
+	public void buttonMethodSelect(View v){
+		clearResult();
+		MyDbHelper helper = new MyDbHelper(this);
+		SQLiteDatabase db = helper.getWritableDatabase();
+		
+		// raqQueryメソッド版
+		try{
+			Cursor c = db.rawQuery("SELECT _id, body FROM messages", null);
+			while(c.moveToNext()){
+				int id = c.getInt(c.getColumnIndex("_id")); // ※ c.getString(0) と同じ
+				String body = c.getString(c.getColumnIndex("body")); // ※ c.getString(1) と同じ
+				addResult(id + ":" + body);
+			}
+			addResult("rawQuery版が成功しました");
+		}
+		catch(Exception ex){
+			addResult("rawQuery版が失敗しました");
+		}
+		
+		// queryメソッド版
+		try{
+			Cursor c = db.query(
+				"messages",						// テーブル名
+				new String[]{"_id", "body"},	// 選択するカラム群
+				null,							// selection
+				null,							// selectionArgs
+				null,							// group by
+				null,							// having
+				null							// order by
+			);
+			while(c.moveToNext()){
+				int id = c.getInt(c.getColumnIndex("_id")); // ※ c.getString(0) と同じ
+				String body = c.getString(c.getColumnIndex("body")); // ※ c.getString(1) と同じ
+				addResult(id + ":" + body);
+			}
+			addResult("query版が成功しました");
+		}
+		catch(Exception ex){
+			addResult("query版が失敗しました");
 		}
 	}
 }
