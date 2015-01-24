@@ -138,9 +138,10 @@ public class MainActivity extends Activity {
 		try{
 			ContentValues values = new ContentValues();
 			values.put("body", "XYZ");
-			db.update("messages",
-				values,
-				"_id >=3 AND _id <= 4", // where. _id = 3, 4 のレコードを更新
+			db.update(
+				"messages",				// テーブル名
+				values,					// 値群。
+				"_id >=3 AND _id <= 4", // 条件。 _id = 3, 4 のレコードを更新
 				null // where args
 			);
 			addResult("update版が成功しました");
@@ -151,6 +152,30 @@ public class MainActivity extends Activity {
 	}
 
 	public void buttonMethodDelete(View v){
-	
+		clearResult();
+		MyDbHelper helper = new MyDbHelper(this);
+		SQLiteDatabase db = helper.getWritableDatabase();
+		
+		// execSQLメソッド版
+		try{
+			db.execSQL("DELETE FROM messages WHERE _id <= 2"); // _id = 1, 2 のレコードを削除
+			addResult("execSQL版の削除が成功しました");
+		}
+		catch(Exception ex){
+			addResult("execSQL版の削除が失敗しました");
+		}
+		
+		// queryメソッド版
+		try{
+			db.delete(
+				"messages",				// テーブル名
+				"_id >=3 AND _id <= 4", // 条件。 _id = 3, 4 のレコードを削除
+				null // where args
+			);
+			addResult("delete版の削除が成功しました");
+		}
+		catch(Exception ex){
+			addResult("delete版の削除が失敗しました");
+		}
 	}
 }
