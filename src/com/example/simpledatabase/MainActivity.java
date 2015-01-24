@@ -110,7 +110,9 @@ public class MainActivity extends Activity {
 		SQLiteDatabase db = getDb();
 		// execSQLメソッド版
 		try{
-			db.execSQL("INSERT INTO messages(body) VALUES('abc')");
+			String body = "abc";
+			// db.execSQL("INSERT INTO messages(body) VALUES('" + body + "')"); // 直接構築
+			db.execSQL("INSERT INTO messages(body) VALUES(?)", new Object[]{ body }); // プレースホルダを使う版
 			addResult("INSERT 成功");
 		}
 		catch(Exception ex){
@@ -130,7 +132,8 @@ public class MainActivity extends Activity {
 		// raqQueryメソッド版
 		try{
 			mData.clear();
-			Cursor c = db.rawQuery("SELECT _id, body FROM messages", null);
+			// Cursor c = db.rawQuery("SELECT _id, body FROM messages WHERE _id < 1000", null); // 直接構築
+			Cursor c = db.rawQuery("SELECT _id, body FROM messages WHERE _id < ?", new String[]{ String.valueOf(1000) }); // プレースホルダを使う版
 			while(c.moveToNext()){
 				int id = c.getInt(c.getColumnIndex("_id")); // ※ c.getString(0) と同じ
 				String body = c.getString(c.getColumnIndex("body")); // ※ c.getString(1) と同じ
@@ -158,7 +161,8 @@ public class MainActivity extends Activity {
 
 		// execSQLメソッド版
 		try{
-			db.execSQL("UPDATE messages SET body = body || 'A' WHERE _id = " + id);
+			// db.execSQL("UPDATE messages SET body = body || 'A' WHERE _id = " + id); // 直接構築
+			db.execSQL("UPDATE messages SET body = body || 'A' WHERE _id = ?", new Object[]{ id } ); // プレースホルダを使う版
 			addResult("UPDATE 成功");
 		}
 		catch(Exception ex){
@@ -180,7 +184,8 @@ public class MainActivity extends Activity {
 		
 		// execSQLメソッド版
 		try{
-			db.execSQL("DELETE FROM messages WHERE _id = " + id);
+			// db.execSQL("DELETE FROM messages WHERE _id = " + id); // 直接構築
+			db.execSQL("DELETE FROM messages WHERE _id = ?", new Object[]{ id }); // プレースホルダを使う版
 			addResult("DELETE 成功");
 		}
 		catch(Exception ex){
