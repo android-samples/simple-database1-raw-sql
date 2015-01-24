@@ -119,4 +119,38 @@ public class MainActivity extends Activity {
 			addResult("query版が失敗しました");
 		}
 	}
+	
+	public void buttonMethodUpdate(View v){
+		clearResult();
+		MyDbHelper helper = new MyDbHelper(this);
+		SQLiteDatabase db = helper.getWritableDatabase();
+		
+		// execSQLメソッド版
+		try{
+			db.execSQL("UPDATE messages SET body = 'xyz' WHERE _id <= 2"); // _id = 1, 2 のレコードを更新
+			addResult("execSQL版が成功しました");
+		}
+		catch(Exception ex){
+			addResult("execSQL版が失敗しました");
+		}
+		
+		// queryメソッド版
+		try{
+			ContentValues values = new ContentValues();
+			values.put("body", "XYZ");
+			db.update("messages",
+				values,
+				"_id >=3 AND _id <= 4", // where. _id = 3, 4 のレコードを更新
+				null // where args
+			);
+			addResult("update版が成功しました");
+		}
+		catch(Exception ex){
+			addResult("update版が失敗しました");
+		}
+	}
+
+	public void buttonMethodDelete(View v){
+	
+	}
 }
